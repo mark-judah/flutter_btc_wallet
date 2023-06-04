@@ -17,6 +17,8 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
   WalletBloc() : super(WalletInitial()) {
     on<WalletHomeLoadedEvent>(walletHomeLoadedEvent);
+    on<FetchWalletBalance>(fetchWalletBalance);
+
   }
 
   Future<FutureOr<void>> walletHomeLoadedEvent(WalletHomeLoadedEvent event, Emitter<WalletState> emit) async {
@@ -50,5 +52,30 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
      emit(WalletLoadedSuccessState(walletAddress,walletName!));
    }
 
+  }
+
+  Future<FutureOr<void>> fetchWalletBalance(FetchWalletBalance event, Emitter<WalletState> emit) async {
+    emit(WalletBalanceLoadingState());
+    var urlPrefix = GlobalVariables.urlPrefix;
+    final url = Uri.parse('$urlPrefix/get-balances');
+    print("url##: " + url.toString());
+
+    final headers = {"Content-type": "application/json"};
+    final json = jsonEncode({
+      "walletName": event.walletName,
+    });
+    final response = await http.post(url, headers: headers, body: json);
+    if (kDebugMode) {
+      print("url##: " + url.toString());
+      print("jsonData##: " + json.toString());
+      print('Status code: ${response.statusCode}');
+      print('Body: ${response.body}');
+    }
+
+    var body = jsonDecode(response.body);
+    var balance=body["getBalances"]["result"]["mine"]["trusted"].toString();
+    print(balance);
+
+    emit(WalletBalanceLoadedState(balance,event.walletAddress));
   }
 }

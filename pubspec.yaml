@@ -17,6 +17,10 @@ dependencies:
   bloc:
   flutter_bloc:
   flutter_secure_storage: any
+  loading_animation_widget: any
+  url_launcher: any
+  qr_flutter: any
+
 
   cupertino_icons: ^1.0.2
   flutter_svg: any

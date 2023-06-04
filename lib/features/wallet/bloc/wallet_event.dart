@@ -8,3 +8,11 @@ class WalletHomeLoadedEvent extends WalletEvent{
   WalletHomeLoadedEvent(this.walletName);
 //getnewAddress
 }
+
+class FetchWalletBalance extends WalletEvent{
+  String walletName;
+  String walletAddress;
+
+  FetchWalletBalance(this.walletName, this.walletAddress);
+
+}

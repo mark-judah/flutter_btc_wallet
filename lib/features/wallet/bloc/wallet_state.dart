@@ -20,6 +20,17 @@ class WalletLoadedSuccessState extends WalletState {
   WalletLoadedSuccessState(this.walletAddress,this.walletName);
 }
 
+class WalletBalanceLoadingState extends WalletState{
+
+}
+
+class WalletBalanceLoadedState extends WalletState{
+  String balance="";
+  String walletAddress="";
+  WalletBalanceLoadedState(this.balance,this.walletAddress);
+
+}
+
 class WalletErrorState extends WalletState{
 
 }

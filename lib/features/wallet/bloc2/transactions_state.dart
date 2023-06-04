@@ -14,6 +14,8 @@ class TransactionsLoadingState extends TransactionsState{
 }
 
 class TransactionsLoadedSuccessState extends TransactionsState {
+  List<dynamic> jsonData;
+  TransactionsLoadedSuccessState(this.jsonData);
 
 }
 
@@ -24,3 +26,21 @@ class TransactionsNullState extends TransactionsState{
 class TransactionsErrorState extends TransactionsState{
 
 }
+
+class InsufficientFundsErrorState extends TransactionsState{
+
+}
+class SendRawTransactionSuccessState extends TransactionsState{
+
+}
+
+class TransactionDetailsLoadingState extends TransactionsState{
+
+}
+
+class TransactionDetailsLoadedSuccessState extends TransactionsState{
+  var transactionDetails={};
+  TransactionDetailsLoadedSuccessState(this.transactionDetails);
+
+}
+

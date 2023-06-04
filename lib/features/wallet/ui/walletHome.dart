@@ -1,17 +1,22 @@
 import 'package:btcwallet/features/wallet/bloc/wallet_bloc.dart';
 import 'package:btcwallet/features/wallet/bloc2/transactions_bloc.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:btcwallet/features/wallet/ui/components/CircularProgressIndicator.dart';
+import 'package:btcwallet/features/wallet/ui/components/NavigateToHomePageComponent.dart';
+import 'package:btcwallet/features/wallet/ui/components/WalletBalanceLoadingComponent.dart';
+import 'package:btcwallet/features/wallet/ui/components/WalletLoadedSuccessComponent.dart';
+import 'package:btcwallet/features/wallet/ui/transactionDetails.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_flushbar/flutter_flushbar.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../intro/bloc/intro_bloc.dart';
+import 'components/WalletBalanceLoadedComponent.dart';
+import 'components/WalletErrorComponent.dart';
 
 class WalletHome extends StatefulWidget {
   var walletName = "";
-  var walletAddress="";
+  var walletAddress = "";
+
   WalletHome(this.walletName, this.walletAddress, {Key? key}) : super(key: key);
 
   @override
@@ -22,7 +27,7 @@ class _MyAppState extends State<WalletHome> {
   @override
   void initState() {
     walletBloc.add(WalletHomeLoadedEvent(widget.walletName));
-    transactionsBloc.add(FetchTransactionsEvent());
+    transactionsBloc.add(FetchTransactionsEvent(widget.walletName));
 
     super.initState();
   }
@@ -44,434 +49,49 @@ class _MyAppState extends State<WalletHome> {
             builder: (context, state) {
               switch (state.runtimeType) {
                 case WalletLoadingState:
-                  return Container(
-                    color: Colors.black,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.yellow,
-                      ),
-                    ),
-                  );
+                  return const CircularProgressComponent();
+
                 case WalletLoadedSuccessState:
                   final walletLoadedSuccessState =
                       state as WalletLoadedSuccessState;
-                  return Scaffold(
-                    body: Container(
-                      color: Colors.black,
-                      child: Column(
-                        children: [
-                          const Padding(
-                            padding:
-                                EdgeInsets.only(top: 50, left: 20, right: 20),
-                          ),
-                          Row(children: [
-                             Padding(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Text(
-                                widget.walletName,
-                                style: const TextStyle(
-                                    color: Colors.yellow,
-                                    fontSize: 20,
-                                    decoration: TextDecoration.none),
-                              ),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.menu,
-                                color: Colors.yellow,
-                              ),
-                            ),
-                          ]),
-                          ////////////////////
-                          const Padding(
-                            padding: EdgeInsets.only(top: 20),
-                          ),
-                          Container(
-                            width: 300,
-                            decoration: const BoxDecoration(
-                                color: Colors.yellow,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: Column(
-                              children: [
-                                Row(children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 20, top: 10),
-                                    child: Text(
-                                      "Bitcoin Balance",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                          decoration: TextDecoration.none),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.refresh,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ]),
-                                const SizedBox(
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 20, top: 10),
-                                      child: Text(
-                                        "0.00000000 BTC",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                    )),
-                                const SizedBox(
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 20, top: 10),
-                                      child: Text(
-                                        "0.00 USD",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                    )),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 20),
-                                    child: Row(children: [
-                                      Text(
-                                        walletLoadedSuccessState.walletAddress,
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          Clipboard.setData(ClipboardData(
-                                                  text: walletLoadedSuccessState
-                                                      .walletAddress))
-                                              .then((_) {
-                                            Flushbar(
-                                              flushbarPosition:
-                                                  FlushbarPosition.TOP,
-                                              backgroundColor: Colors.yellow,
-                                              duration:
-                                                  const Duration(seconds: 3),
-                                              messageText: const Text(
-                                                "Copied to clipboard!",
-                                                style: TextStyle(
-                                                    fontSize: 12.0,
-                                                    color: Colors.black,
-                                                    fontFamily:
-                                                        "ShadowsIntoLightTwo"),
-                                              ),
-                                            ).show(context);
-                                          });
-                                        },
-                                        icon: const Icon(
-                                          Icons.copy,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ]),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: MaterialButton(
-                                  color: Colors.yellow,
-                                  onPressed: () {},
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.qr_code_scanner,
-                                        color: Colors.black,
-                                      ),
-                                      Spacer(),
-                                      Text("Scan")
-                                    ],
-                                  ),
-                                )),
-                                Expanded(
-                                    child: MaterialButton(
-                                  color: Colors.yellow,
-                                  onPressed: () {},
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.call_made,
-                                        color: Colors.black,
-                                      ),
-                                      Spacer(),
-                                      Text("Receive")
-                                    ],
-                                  ),
-                                )),
-                                Expanded(
-                                    child: MaterialButton(
-                                  color: Colors.yellow,
-                                  onPressed: () {},
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.call_received,
-                                        color: Colors.black,
-                                      ),
-                                      Spacer(),
-                                      Text("Receive")
-                                    ],
-                                  ),
-                                )),
-                              ],
-                            ),
-                          ),
-                          ///////////////////
-                        ],
-                      ),
-                    ),
-                  );
+                  walletBloc.add(FetchWalletBalance(widget.walletName,
+                      walletLoadedSuccessState.walletAddress));
+                  return WalletLoadedSuccessComponent(
+                      widget.walletName, walletBloc, walletLoadedSuccessState);
 
                 case NavigateToHomePageActionState:
-                  return Scaffold(
-                    body: Container(
-                      color: Colors.black,
-                      child: Column(
-                        children: [
-                          const Padding(
-                            padding:
-                            EdgeInsets.only(top: 50, left: 20, right: 20),
-                          ),
-                          Row(children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Text(
-                                widget.walletName,
-                                style: const TextStyle(
-                                    color: Colors.yellow,
-                                    fontSize: 20,
-                                    decoration: TextDecoration.none),
-                              ),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.menu,
-                                color: Colors.yellow,
-                              ),
-                            ),
-                          ]),
-                          ////////////////////
-                          const Padding(
-                            padding: EdgeInsets.only(top: 20),
-                          ),
-                          Container(
-                            width: 300,
-                            decoration: const BoxDecoration(
-                                color: Colors.yellow,
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                            child: Column(
-                              children: [
-                                Row(children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 20, top: 10),
-                                    child: Text(
-                                      "Bitcoin Balance",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                          decoration: TextDecoration.none),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.refresh,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ]),
-                                const SizedBox(
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding:
-                                      EdgeInsets.only(left: 20, top: 10),
-                                      child: Text(
-                                        "0.00000000 BTC",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                    )),
-                                const SizedBox(
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding:
-                                      EdgeInsets.only(left: 20, top: 10),
-                                      child: Text(
-                                        "0.00 USD",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                    )),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 20),
-                                    child: Row(children: [
-                                      Text(
-                                        widget.walletAddress,
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          Clipboard.setData(ClipboardData(
-                                              text: widget
-                                                  .walletAddress))
-                                              .then((_) {
-                                            Flushbar(
-                                              flushbarPosition:
-                                              FlushbarPosition.TOP,
-                                              backgroundColor: Colors.yellow,
-                                              duration:
-                                              const Duration(seconds: 3),
-                                              messageText: const Text(
-                                                "Copied to clipboard!",
-                                                style: TextStyle(
-                                                    fontSize: 12.0,
-                                                    color: Colors.black,
-                                                    fontFamily:
-                                                    "ShadowsIntoLightTwo"),
-                                              ),
-                                            ).show(context);
-                                          });
-                                        },
-                                        icon: const Icon(
-                                          Icons.copy,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ]),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.yellow,
-                                      onPressed: () {},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.qr_code_scanner,
-                                            color: Colors.black,
-                                          ),
-                                          Spacer(),
-                                          Text("Scan")
-                                        ],
-                                      ),
-                                    )),
-                                Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.yellow,
-                                      onPressed: () {},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.call_made,
-                                            color: Colors.black,
-                                          ),
-                                          Spacer(),
-                                          Text("Receive")
-                                        ],
-                                      ),
-                                    )),
-                                Expanded(
-                                    child: MaterialButton(
-                                      color: Colors.yellow,
-                                      onPressed: () {},
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.call_received,
-                                            color: Colors.black,
-                                          ),
-                                          Spacer(),
-                                          Text("Receive")
-                                        ],
-                                      ),
-                                    )),
-                              ],
-                            ),
-                          ),
-                          ///////////////////
-                        ],
-                      ),
-                    ),
-                  );
+                  return NavigateToHomePageComponent(
+                      widget.walletName, walletBloc, widget.walletAddress);
+
+                case WalletBalanceLoadingState:
+                  return WalletBalanceLoadingComponent(
+                      widget.walletName, walletBloc, widget.walletAddress);
+
+                case WalletBalanceLoadedState:
+                  final walletBalanceLoadedState =
+                      state as WalletBalanceLoadedState;
+                  return WalletBalanceLoadedComponent(
+                      walletBloc, walletBalanceLoadedState, widget.walletName);
 
                 case WalletErrorState:
-                  return Scaffold(
-                      body: Container(
-                          color: Colors.black,
-                          child: const Center(
-                            child: Text("An error occured, try again later",
-                                style: TextStyle(
-                                    color: Colors.yellow, fontSize: 20)),
-                          )));
+                  return WalletErrorComponent("An error occured, please try again later");
 
                 default:
                   return SizedBox();
               }
             }),
-        height: 450,
+        height: 375,
       ),
       /////////////////////////////////////////////////////////////////////////////////////////////
       Container(
         child: BlocConsumer<TransactionsBloc, TransactionsState>(
             bloc: transactionsBloc,
             //listen for emitted action states and perform an action
-            listenWhen: (previous, current) => current is TransactionsActionState,
+            listenWhen: (previous, current) =>
+                current is TransactionsActionState,
             //build when there is no action state
-            buildWhen: (previous, current) => current is! TransactionsActionState,
+            buildWhen: (previous, current) =>
+                current is! TransactionsActionState,
             listener: (context, state) {},
             builder: (context, state) {
               print("transactionbloc####");
@@ -515,27 +135,128 @@ class _MyAppState extends State<WalletHome> {
                   );
 
                 case TransactionsLoadedSuccessState:
+                  print("TransactionsLoadedSuccessState#########33");
+                  final transactionsLoadedSuccessState =
+                      state as TransactionsLoadedSuccessState;
                   return Column(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(top: 20),
+                    children: [
+
+                      Row(
+                        children: [
+                          Spacer(),
+                          const Text(
+                            "Transactions",
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                decoration: TextDecoration.none),
+                          ),
+                          Spacer(),
+                          Material(
+                              color: Colors.black,
+                              child: IconButton(
+                                onPressed: () {
+                                  transactionsBloc.add(FetchTransactionsEvent(
+                                      widget.walletName));
+                                },
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.yellow,
+                                ),
+                              )),
+                          Spacer(),
+                        ],
                       ),
-                      Text(
-                        "Transactions",
-                        style: TextStyle(
-                            color: Colors.yellow,
-                            fontSize: 20,
-                            decoration: TextDecoration.none),
-                      ),
+                      Expanded(
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: transactionsLoadedSuccessState
+                                  .jsonData.length,
+                              itemBuilder: (context, index) {
+                                print("listview builder");
+                                if (transactionsLoadedSuccessState
+                                        .jsonData[index]["category"] ==
+                                    "receive") {
+                                  print("listtile:receive");
+                                  return Material(
+                                    color: Colors.black,
+                                    child: Card(
+                                        color: Colors.yellow,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          //set border radius more than 50% of height and width to make circle
+                                        ),
+                                        child: ListTile(
+                                          leading: const Icon(Icons.call_received,
+                                              color: Colors.black),
+                                          title: Text(
+                                            "Received " +
+                                                transactionsLoadedSuccessState
+                                                    .jsonData[index]["amount"]
+                                                    .toString() +
+                                                " BTC",
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                                decoration:
+                                                    TextDecoration.none),
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => TransactionDetails(transactionsLoadedSuccessState
+                                                  .jsonData[index]["txid"],widget.walletName)),
+                                            );
+                                          },
+                                        )),
+                                  );
+                                } else {
+                                  print("listtile:send");
+                                  return Material(
+                                      color: Colors.black,
+                                      child: Card(
+                                        color: Colors.yellow,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          //set border radius more than 50% of height and width to make circle
+                                        ),
+                                        child: ListTile(
+                                          leading: const Icon(Icons.call_made,
+                                              color: Colors.black),
+                                          title: Text(
+                                            "Sent " +
+                                                transactionsLoadedSuccessState
+                                                    .jsonData[index]["amount"]
+                                                    .toString() +
+                                                " BTC",
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                                decoration:
+                                                    TextDecoration.none),
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => TransactionDetails(transactionsLoadedSuccessState
+                                                  .jsonData[index]["txid"],widget.walletName)),
+                                            );
+                                          },
+                                        ),
+                                      ));
+                                }
+                              }))
                     ],
                   );
 
                 default:
                   print("default");
-                 return SizedBox();
+                  return SizedBox();
               }
             }),
-        height: 210,
+        height: 285,
       ),
 
       BottomNavigationBar(
