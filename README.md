@@ -44,9 +44,12 @@
 
 <h3>Configuration</h3>
 <p>Configure the app to connect to your Bitcoin wallet:</p>
-<ul>
-  <li>Update the app settings to connect to your Bitcoin Core or compatible wallet (for testnet).</li>
-</ul>
+<p>Open the Flutter project and locate the <em>globalVariables.dart</em> file.</p>
+
+<p>Update the <code>urlPrefix</code> variable with the backend URL:</p>
+<pre><code>
+static var urlPrefix = "YOUR_BACKEND_URL";
+</code></pre>
 
 <h3>Running the Project</h3>
 <ol>
