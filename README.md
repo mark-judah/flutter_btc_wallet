@@ -28,7 +28,7 @@
 <ol>
   <li>Clone the Flutter Bitcoin Wallet Client repository:</li>
   <pre><code>
-  git clon https://github.com/mark-judah/flutter_btc_wallet.git
+  git clone https://github.com/mark-judah/flutter_btc_wallet.git
   </code></pre>
   
   <li>Navigate to the project directory:</li>
