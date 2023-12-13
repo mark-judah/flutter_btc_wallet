@@ -5,7 +5,7 @@
 
 <h1>Flutter Bitcoin Wallet Client</h1>
 
-<p>The Flutter Bitcoin Wallet Client enables users to manage their Bitcoin wallets, perform transactions, and explore past transaction details via a third-party block explorer.The wallets are HD wallets which facilitate the generation of new addresses for each transaction, preserving privacy by preventing address reuse. HD wallets simplify backup processes by requiring users to save only the initial seed phrase. The client links with  <a href="https://github.com/mark-judah/js_bitcoin_wallet" target="_blank"> the nodejs backend, which handles all requests.</a> </p>
+<p>The Flutter Bitcoin Wallet Client enables users to manage their Bitcoin wallets, perform transactions, and explore past transaction details via a third-party block explorer.The wallets are HD wallets which facilitate the generation of new addresses for each transaction, preserving privacy by preventing address reuse. HD wallets simplify backup processes by requiring users to save only the initial seed phrase. The client links with  <a href="https://github.com/mark-judah/js_bitcoin_wallet" target="_blank"> the nodejs backend</a>,which handles all requests.</p>
 
 <h2>Features</h2>
 <ul>
