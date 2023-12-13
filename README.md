@@ -33,7 +33,7 @@
   
   <li>Navigate to the project directory:</li>
   <pre><code>
-  cd flutter-bitcoin-wallet
+  cd flutter_btc_wallet
   </code></pre>
   
   <li>Install project dependencies:</li>
